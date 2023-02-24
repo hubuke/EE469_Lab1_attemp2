@@ -10,6 +10,10 @@ module memory (clk, A, WD, MemWrite, RD); // , mem0, mem1, mem2, mem3
     localparam mem_size = 4096;
     localparam zero_byte = 8'b0;
 
+    logic [31:0] addr; // 8-bit address
+    
+    assign addr = A >> 2; // 32-bit address to 8-bit address
+
     reg [7:0] mem0 [0:(mem_size/4 - 1)]; // LSByte
     reg [7:0] mem1 [0:(mem_size/4 - 1)];
     reg [7:0] mem2 [0:(mem_size/4 - 1)];
@@ -24,12 +28,12 @@ module memory (clk, A, WD, MemWrite, RD); // , mem0, mem1, mem2, mem3
 
     always_ff @(posedge clk) begin
         if (MemWrite) begin
-            mem0[A] <= WD[7:0]; 
-            mem1[A] <= WD[15:8];
-            mem2[A] <= WD[23:16];
-            mem3[A] <= WD[31:24];
+            mem0[addr] <= WD[7:0]; 
+            mem1[addr] <= WD[15:8];
+            mem2[addr] <= WD[23:16];
+            mem3[addr] <= WD[31:24];
         end
-        RD <= {mem3[A], mem2[A], mem1[A], mem0[A]};
+        RD <= {mem3[addr], mem2[addr], mem1[addr], mem0[addr]};
     end
 
 endmodule
