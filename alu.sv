@@ -35,12 +35,12 @@ module alu (srca, srcb, alu_op, result, zero, negative, carryout, overflow);
                 result = temp_result[31:0];
             end
             4'b1001: begin
-                // arithmetic shift right
-                if (srca[31]) begin
-                    result = {{32{1'b1}}, srca} >> srcb[4:0];
-                end else begin
-                    result = srca >> srcb[4:0];
-                end
+                // arithemtic right shift
+                result = srca >>> srcb[4:0];
+            end
+            4'b1101: begin
+                // arithemtic left shift
+                result = srca <<< srcb[4:0];
             end
             4'b1010: begin
                 // set less than unsigned

@@ -5,7 +5,11 @@
 
 /* verilator lint_off TIMESCALEMOD */
 
-module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
+module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset, pc_out, mem_addr, 
+        Result, ReadData, WriteData, Instr, OldPC, Rs1, Rs2, Rd, RD1, RD2, RD1_A, 
+        srca, srcb, ImmExt, ALUResult, ALUOut, Data, zero, negative, carryout, 
+        overflow, pc_write, AdrSrc, MemWrite, IRWrite, ResultSrc, ALUControl, 
+        ALUSrcb, ALUSrca, RegWrite);
 
     input                clk; 
     input                reset; 
@@ -30,6 +34,7 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
     output logic [31:0]  ImmExt; // extended immediate
     output logic [31:0]  ALUResult; // ALU result
     output logic [31:0]  ALUOut; // ALU output
+    output logic [31:0]  Data; // data from memory
     output logic         zero, negative, carryout, overflow; // ALU flags
 
 
@@ -55,7 +60,7 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
     localparam pc_increment = 32'h00000004;
 
     // all below are datapath signals
-    pc #(.reset_pc) pc0 (.clk, .reset, .pc_write, .pc_in, .pc_out);
+    pc #(.reset_pc) pc0 (.clk, .reset, .pc_write, .pc_in(Result), .pc_out);
     mux2_1 mem_addr_mux (.out(mem_addr), .i0(pc_out), .i1(Result), .sel(AdrSrc));
     memory unified_memory (.clk, .A(mem_addr), .WD(WriteData), .MemWrite, .RD(ReadData)); // unified memory
     enable_register PC_reg (.clk, .EN(IRWrite), .in(pc_out), .out(OldPC));
@@ -72,8 +77,8 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
     mux4_1 Result_mux (.out(Result), .i0(ALUOut), .i1(Data), .i2(ALUResult), .i3(ZERO_32bit), .sel(ResultSrc));
 
     // control
-    controller ctrl (.clk, .reset, .instruction, .pc_write, .AdrSrc, .MemWrite, .IRWrite, .ResultSrc, 
-    .ALUControl, .ALUSrcb, .ALUSrca, .RegWrite, .zero, .negative, .overflow, .carry);
+    controller ctrl (.clk, .reset, .instruction(Instr), .pc_write, .AdrSrc, .MemWrite, .IRWrite, .ResultSrc, 
+    .ALUControl, .ALUSrcb, .ALUSrca, .RegWrite, .zero, .negative, .overflow, .carry(carryout));
 
 endmodule
 
