@@ -46,7 +46,7 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
     assign Rs2 = Instr[24:20];
     assign Rd = Instr[11:7];
 
-    localparam zero = 32'h00000000;
+    localparam ZERO_32bit = 32'h00000000;
     localparam enable = 1'b1;
     localparam pc_increment = 32'h00000004;
 
@@ -60,37 +60,38 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
     get_imm get_imm0 (.instr(Instr), .imm(ImmExt));
     enable_register RD1_reg (.clk, .EN(enable), .in(RD1), .out(RD1_A));
     enable_register RD2_reg (.clk, .EN(enable), .in(RD2), .out(WriteData));
-    mux4_1 SrcA_mux (.out(srca), .i0(pc_out), .i1(OldPC), .i2(RD1_A), .i3(zero), .sel(ALUSrca));
-    mux4_1 SrcB_mux (.out(srcb), .i0(WriteData), .i1(ImmExt), .i2(pc_increment), .i3(zero), .sel(ALUSrcb));
+    mux4_1 SrcA_mux (.out(srca), .i0(pc_out), .i1(OldPC), .i2(RD1_A), .i3(ZERO_32bit), .sel(ALUSrca));
+    mux4_1 SrcB_mux (.out(srcb), .i0(WriteData), .i1(ImmExt), .i2(pc_increment), .i3(ZERO_32bit), .sel(ALUSrcb));
     alu alu0 (.srca, .srcb, .alu_op(ALUControl), .result(ALUResult), .zero, .negative, .carryout, .overflow);
     enable_register ALU_reg (.clk, .EN(enable), .in(ALUResult), .out(ALUOut));
     enable_register Data_reg (.clk, .EN(enable), .in(ReadData), .out(Data));
-    mux4_1 Result_mux (.out(Result), .i0(ALUOut), .i1(Data), .i2(ALUResult), .i3(zero), .sel(ResultSrc));
+    mux4_1 Result_mux (.out(Result), .i0(ALUOut), .i1(Data), .i2(ALUResult), .i3(ZERO_32bit), .sel(ResultSrc));
 
     // control
-    controller ctrl (.clk, .reset, .instruction, .pc_write, .AdrSrc, .MemWrite, .IRWrite, .ResultSrc, .ALUControl, .ALUSrcb, .ALUSrca, .RegWrite);
+    controller ctrl (.clk, .reset, .instruction, .pc_write, .AdrSrc, .MemWrite, .IRWrite, .ResultSrc, 
+    .ALUControl, .ALUSrcb, .ALUSrca, .RegWrite, .zero, .negative, .overflow, .carry);
 
 endmodule
 
-// module riscv32_testbench();
+module riscv32_testbench();
 
-// parameter CLOCK_PERIOD = 10;
+parameter CLOCK_PERIOD = 10;
 
-//     initial begin
-//         clk <= 0;
-// 		forever #(CLOCK_PERIOD/2) clk <= ~clk;//toggle the clock indefinitely
-//     end
+    initial begin
+        clk <= 0;
+		forever #(CLOCK_PERIOD/2) clk <= ~clk;//toggle the clock indefinitely
+    end
 
 
 
-//     initial begin
-//         reset <=1; @(posedge clk); 
-//         reset <=1; @(posedge clk);
-//         reset <=0; @(posedge clk);
-//         reset <=0; @(posedge clk); 
+    initial begin
+        reset <=1; @(posedge clk); 
+        reset <=1; @(posedge clk);
+        reset <=0; @(posedge clk);
+        reset <=0; @(posedge clk); 
         
-//         for (int i = 0; i < 1000; i = i + 1) @(posedge clk);
-//         $stop;
-//     end
+        for (int i = 0; i < 1000; i = i + 1) @(posedge clk);
+        $stop;
+    end
 
-// endmodule
+endmodule

@@ -9,6 +9,7 @@ module alu (srca, srcb, alu_op, result, zero, negative, carryout, overflow);
     output reg          zero, negative, carryout, overflow;
 
     logic [32:0]        temp_result;
+    localparam          ZERO_32bit = 32'h00000000;
 
     always_comb begin
         case (alu_op)
@@ -47,7 +48,7 @@ module alu (srca, srcb, alu_op, result, zero, negative, carryout, overflow);
                     result = srca;
                     negative = 1'b1;
                 end else begin
-                    result = 32'b0;
+                    result = ZERO_32bit;
                     negative = 1'b0;
                 end
             end
@@ -57,7 +58,7 @@ module alu (srca, srcb, alu_op, result, zero, negative, carryout, overflow);
                         result = srca;
                         negative = 1'b1;
                     end else begin
-                        result = 32'b0;
+                        result = ZERO_32bit;
                         negative = 1'b0;
                     end
                 end else begin
@@ -65,18 +66,18 @@ module alu (srca, srcb, alu_op, result, zero, negative, carryout, overflow);
                         result = srca;
                         negative = 1'b1;
                     end else begin
-                        result = 32'b0;
+                        result = ZERO_32bit;
                         negative = 1'b0;
                     end
                 end
             end
             default: begin
-                result = 32'b0; // invalid
+                result = ZERO_32bit; // invalid
                 carryout = 1'b0;
                 overflow = 1'b0;
             end
         endcase
-        if (result == 32'b0) begin
+        if (result == ZERO_32bit) begin
             zero = 1'b1;
             negative = 1'b0;
         end else begin
