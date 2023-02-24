@@ -1,6 +1,6 @@
-`timescale 1ns / 1ps
+`timescale 1ns/1ps
 
-module pc #(reset_pc = 32'h00001000) (clk, reset, pc_write, pc_in, pc_out);
+module pc #(reset_pc = 32'h00000000) (clk, reset, pc_write, pc_in, pc_out);
     input logic clk, reset, pc_write;
     input logic [31:0] pc_in;
     output logic [31:0] pc_out;

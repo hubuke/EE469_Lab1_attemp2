@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 /* verilator lint_off MULTITOP */
 module mux2_1(out, i0, i1, sel);
     output logic [31:0] out;
@@ -8,6 +10,8 @@ module mux2_1(out, i0, i1, sel);
         else out = i0;
     end
 endmodule
+
+`timescale 1ns/1ps
 
 module mux4_1 (out, i0, i1, i2, i3, sel);
     input logic [31:0] i0, i1, i2, i3;

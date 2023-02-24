@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module memory (clk, A, WD, MemWrite, RD, mem0, mem1, mem2, mem3);
+module memory (clk, A, WD, MemWrite, RD); // , mem0, mem1, mem2, mem3
     input logic clk;
     input logic [31:0] A; // 32-bit address
     input logic [31:0] WD;
@@ -10,10 +10,10 @@ module memory (clk, A, WD, MemWrite, RD, mem0, mem1, mem2, mem3);
     localparam mem_size = 4096;
     localparam zero_byte = 8'b0;
 
-    output reg [7:0] mem0 [0:(mem_size/4 - 1)]; // LSByte
-    output reg [7:0] mem1 [0:(mem_size/4 - 1)];
-    output reg [7:0] mem2 [0:(mem_size/4 - 1)];
-    output reg [7:0] mem3 [0:(mem_size/4 - 1)]; // MSByte
+    reg [7:0] mem0 [0:(mem_size/4 - 1)]; // LSByte
+    reg [7:0] mem1 [0:(mem_size/4 - 1)];
+    reg [7:0] mem2 [0:(mem_size/4 - 1)];
+    reg [7:0] mem3 [0:(mem_size/4 - 1)]; // MSByte
 
     initial begin
         $readmemh("test0.mem", mem0);
@@ -33,6 +33,8 @@ module memory (clk, A, WD, MemWrite, RD, mem0, mem1, mem2, mem3);
     end
 
 endmodule
+
+`timescale 1ns/1ps
 
 module memory_testbench ();
     logic clk;

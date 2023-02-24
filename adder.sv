@@ -10,6 +10,8 @@ module adder(current_pc, in, out);
     end
 endmodule
 
+`timescale 1ns/1ps
+
 module adder_testbench();
     logic     [31:0] current_pc;
     logic     [31:0] in;

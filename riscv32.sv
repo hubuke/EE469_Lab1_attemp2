@@ -1,6 +1,10 @@
-`timescale 1ns / 1ps
+`timescale 1ns/1ps
+
 // riscv cpu, includes datapath and control
 // 32 bit instruction set
+
+/* verilator lint_off TIMESCALEMOD */
+
 module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
 
     input                clk; 
@@ -57,7 +61,7 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
     enable_register PC_reg (.clk, .EN(IRWrite), .in(pc_out), .out(OldPC));
     enable_register RD_reg (.clk, .EN(IRWrite), .in(ReadData), .out(Instr));
     register_file reg_file (.clk, .A1(Rs1), .A2(Rs2), .A3(Rd), .WD3(Result), .WE3(RegWrite), .RD1, .RD2);
-    get_imm get_imm0 (.instr(Instr), .imm(ImmExt));
+    get_imm get_imm0 (.instruction(Instr), .imm(ImmExt));
     enable_register RD1_reg (.clk, .EN(enable), .in(RD1), .out(RD1_A));
     enable_register RD2_reg (.clk, .EN(enable), .in(RD2), .out(WriteData));
     mux4_1 SrcA_mux (.out(srca), .i0(pc_out), .i1(OldPC), .i2(RD1_A), .i3(ZERO_32bit), .sel(ALUSrca));
@@ -73,25 +77,29 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
 
 endmodule
 
-module riscv32_testbench();
+// /* verilator lint_off MULTITOP */
+// `timescale 1ns/1ps
 
-parameter CLOCK_PERIOD = 10;
+// module riscv32_testbench();
 
-    initial begin
-        clk <= 0;
-		forever #(CLOCK_PERIOD/2) clk <= ~clk;//toggle the clock indefinitely
-    end
+// parameter CLOCK_PERIOD = 10;
+
+//     initial begin
+//         clk <= 0;
+// 		forever #(CLOCK_PERIOD/2) clk <= ~clk;//toggle the clock indefinitely
+//     end
 
 
 
-    initial begin
-        reset <=1; @(posedge clk); 
-        reset <=1; @(posedge clk);
-        reset <=0; @(posedge clk);
-        reset <=0; @(posedge clk); 
+//     initial begin
+//         reset <=1; @(posedge clk); 
+//         reset <=1; @(posedge clk);
+//         reset <=0; @(posedge clk);
+//         reset <=0; @(posedge clk); 
         
-        for (int i = 0; i < 1000; i = i + 1) @(posedge clk);
-        $stop;
-    end
+//         for (int i = 0; i < 1000; i = i + 1) @(posedge clk);
+//         $stop;
+//     end
 
-endmodule
+// endmodule
+// /* verilator lint_on MULTITOP */

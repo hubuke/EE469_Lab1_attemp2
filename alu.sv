@@ -87,6 +87,8 @@ module alu (srca, srcb, alu_op, result, zero, negative, carryout, overflow);
     end
 endmodule
 
+`timescale 1ns/1ps
+
 module alu_testbench();
     logic   [31:0]  srca;
     logic   [31:0]  srcb;

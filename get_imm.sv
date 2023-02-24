@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 // define all macros for rv32i instructions
 `define LUI 7'b0110111
 `define AUIPC 7'b0010111
@@ -39,6 +41,8 @@ module get_imm (instruction, imm);
         end
     end
 endmodule
+
+`timescale 1ns/1ps
 
 module get_imm_testbench();
     logic [31:0] instruction;
