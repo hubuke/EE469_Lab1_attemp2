@@ -68,7 +68,7 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
     mux4_1 Result_mux (.out(Result), .i0(ALUOut), .i1(Data), .i2(ALUResult), .i3(zero), .sel(ResultSrc));
 
     // control
-    controller ctrl (.clk, .reset, .pc_write, .AdrSrc, .MemWrite, .IRWrite, .ResultSrc, .ALUControl, .ALUSrcb, .ALUSrca, .RegWrite);
+    controller ctrl (.clk, .reset, .instruction, .pc_write, .AdrSrc, .MemWrite, .IRWrite, .ResultSrc, .ALUControl, .ALUSrcb, .ALUSrca, .RegWrite);
 
 endmodule
 
