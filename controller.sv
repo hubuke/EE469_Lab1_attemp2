@@ -35,7 +35,7 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
         assign  funct3[2:0] = instruction[14:12];
         assign  funct7[6:0] = instruction[31:25];
         
-        enum {FETCH, DECODE, MEMORY_ADDRESS, MEMORY_READ, WRITEBACK, MEMORY_WRITE, EXECUTEI, EXECUTER, BRANCH, JAL, ALU_WB} ps, ns;
+        enum {FETCH, DECODE, MEMORY_ADDRESS, MEMORY_READ, WRITEBACK, MEMORY_WRITE, EXECUTER, ALU_WB, EXECUTEI, JAL, BRANCH} ps, ns;
         assign state = ps;
 
         ALUDecoder alu_decoder (.opb5(opcode[5]), .ALUop, .funct3, .funct7b5(funct7[5]), .ALUControl);
