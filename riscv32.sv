@@ -62,7 +62,8 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset, pc_out, mem_add
     // all below are datapath signals
     pc #(.reset_pc) pc0 (.clk, .reset, .pc_write, .pc_in(Result), .pc_out);
     mux2_1 mem_addr_mux (.out(mem_addr), .i0(pc_out), .i1(Result), .sel(AdrSrc));
-    memory unified_memory (.clk, .A(mem_addr), .WD(WriteData), .MemWrite, .RD(ReadData)); // unified memory
+    // memory unified_memory (.clk, .A(mem_addr), .WD(WriteData), .MemWrite, .RD(ReadData)); // unified memory
+    memory_single_reg unified_memory (.clk, .A(mem_addr), .WD(WriteData), .MemWrite, .RD(ReadData)); // unified memory
     enable_register PC_reg (.clk, .EN(IRWrite), .in(pc_out), .out(OldPC));
     enable_register RD_reg (.clk, .EN(IRWrite), .in(ReadData), .out(Instr));
     register_file reg_file (.clk, .A1(Rs1), .A2(Rs2), .A3(Rd), .WD3(Result), .WE3(RegWrite), .RD1, .RD2);

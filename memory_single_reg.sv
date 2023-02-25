@@ -1,3 +1,5 @@
+`timescale 1ns/1ps
+
 module memory_single_reg (clk, A, WD, MemWrite, RD); // , mem0, mem1, mem2, mem3
     input logic clk;
     input logic [31:0] A; // 32-bit address
@@ -23,5 +25,4 @@ module memory_single_reg (clk, A, WD, MemWrite, RD); // , mem0, mem1, mem2, mem3
         end
         RD <= {mem[A], mem[A+1], mem[A+2], mem[A+3]};
     end
-
 endmodule
