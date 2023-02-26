@@ -35,7 +35,8 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
         assign  funct3[2:0] = instruction[14:12];
         assign  funct7[6:0] = instruction[31:25];
         
-        enum {FETCH, DECODE, MEMORY_ADDRESS, MEMORY_READ, WRITEBACK, MEMORY_WRITE, EXECUTER, ALU_WB, EXECUTEI, JAL, BRANCH} ps, ns;
+//        enum {FETCH, DECODE, MEMORY_ADDRESS, MEMORY_READ, WRITEBACK, MEMORY_WRITE, EXECUTER, ALU_WB, EXECUTEI,JAL, BRANCH, START} ps, ns;
+        enum {FETCH, DECODE, MEMORY_ADDRESS, MEMORY_READ, WRITEBACK, MEMORY_WRITE, EXECUTER, ALU_WB, EXECUTEI,JAL, BRANCH} ps, ns;
         assign state = ps;
 
         ALUDecoder alu_decoder (.opb5(opcode[5]), .ALUop, .funct3, .funct7b5(funct7[5]), .ALUControl);
@@ -43,6 +44,7 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
         // FSM 
         always_comb begin
             ns = FETCH;
+//            ns = START;
             pc_write = 1'bx;
             AdrSrc = 1'bx;
             RegWrite = 1'bx;
@@ -145,7 +147,7 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
                 end
                 ALU_WB: begin
                     ns = FETCH;
-                    ResultSrc = 2'b01;
+                    ResultSrc = 2'b00;
                     RegWrite = 1'b1;
                 end
                 BRANCH: begin
@@ -182,11 +184,15 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
                         end
                     endcase
                 end
-
+//                START: begin
+//                    ns = FETCH;
+//                    pc_write = 1'b0;
+//                end                    
             endcase
         end
 
         always_ff @(posedge clk) begin
+//            if(reset) ps <= START;
             if(reset) ps <= FETCH;
             else ps <= ns;
         end        
