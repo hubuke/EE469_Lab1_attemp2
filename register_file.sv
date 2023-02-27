@@ -16,7 +16,11 @@ module register_file (clk, A1, A2, A3, WD3, WE3, RD1, RD2);
         if (WE3) begin
             registers[A3] <= WD3;
         end
-        RD1 <= registers[A1];
-        RD2 <= registers[A2];
+        
+    end
+    
+    always_comb begin
+        RD1 = registers[A1];
+        RD2 = registers[A2];
     end
 endmodule
