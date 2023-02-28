@@ -62,21 +62,23 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
     // memory unified_memory (.clk, .A(mem_addr), .WD(WriteData), .MemWrite, .RD(ReadData)); // unified memory
     memory_single_reg unified_memory (.clk, .A(mem_addr), .WD(WriteData), .MemWrite, .RD(ReadData)); // unified memory
     enable_register PC_reg (.clk, .EN(IRWrite), .reset, .in(pc_out), .out(OldPC));
-    enable_register RD_reg (.clk, .EN(IRWrite), .reset, .in(ReadData), .out(Instr));
-    // comb_reg Instr_reg (.in(ReadData), .out(Instr), .en(IRWrite));
+    // enable_register RD_reg (.clk, .EN(IRWrite), .reset, .in(ReadData), .out(Instr));
+    comb_reg Instr_reg (.in(ReadData), .out(Instr), .en(IRWrite));
     register_file reg_file (.clk, .A1(Rs1), .A2(Rs2), .A3(Rd), .WD3(Result), .WE3(RegWrite), .RD1, .RD2);
     get_imm get_imm0 (.instruction(Instr), .imm(ImmExt));
     
-   enable_register RD1_reg (.clk, .EN(enable), .reset, .in(RD1), .out(RD1_A));
-   enable_register RD2_reg (.clk, .EN(enable), .reset, .in(RD2), .out(WriteData));
-   mux4_1 SrcA_mux (.out(srca), .i0(pc_out), .i1(OldPC), .i2(RD1_A), .i3(ZERO_32bit), .sel(ALUSrca));
-   mux4_1 SrcB_mux (.out(srcb), .i0(WriteData), .i1(ImmExt), .i2(pc_increment), .i3(ZERO_32bit), .sel(ALUSrcb));
+//    enable_register RD1_reg (.clk, .EN(enable), .reset, .in(RD1), .out(RD1_A));
+//    enable_register RD2_reg (.clk, .EN(enable), .reset, .in(RD2), .out(WriteData));
+    comb_reg RD1_reg (.in(RD1), .out(RD1_A), .en(enable));
+    comb_reg RD2_reg (.in(RD2), .out(WriteData), .en(enable));
+    mux4_1 SrcA_mux (.out(srca), .i0(pc_out), .i1(OldPC), .i2(RD1_A), .i3(ZERO_32bit), .sel(ALUSrca));
+    mux4_1 SrcB_mux (.out(srcb), .i0(WriteData), .i1(ImmExt), .i2(pc_increment), .i3(ZERO_32bit), .sel(ALUSrcb));
     // mux4_1 SrcA_mux (.out(srca), .i0(pc_out), .i1(OldPC), .i2(RD1), .i3(ZERO_32bit), .sel(ALUSrca));
     // mux4_1 SrcB_mux (.out(srcb), .i0(RD2), .i1(ImmExt), .i2(pc_increment), .i3(ZERO_32bit), .sel(ALUSrcb));
     alu alu0 (.srca, .srcb, .alu_op(ALUControl), .result(ALUResult), .zero, .negative, .carryout, .overflow);
     enable_register ALU_reg (.clk, .EN(enable), .reset, .in(ALUResult), .out(ALUOut));
-    enable_register Data_reg (.clk, .EN(enable), .reset, .in(ReadData), .out(Data));
-    // comb_reg Data_reg (.in(ReadData), .out(Data), .en(enable));
+    // enable_register Data_reg (.clk, .EN(enable), .reset, .in(ReadData), .out(Data));
+    comb_reg Data_reg (.in(ReadData), .out(Data), .en(enable));
     mux4_1 Result_mux (.out(Result), .i0(ALUOut), .i1(Data), .i2(ALUResult), .i3(ZERO_32bit), .sel(ResultSrc));
 
     // control
@@ -107,7 +109,7 @@ endmodule
         reset <=0; @(posedge clk);
         reset <=0; @(posedge clk); 
     
-        for (int i = 0; i < 100; i = i + 1) @(posedge clk);
+        for (int i = 0; i < 500000; i = i + 1) @(posedge clk);
         $stop;
     end
 
