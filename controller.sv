@@ -26,6 +26,8 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
 
         output logic [3:0] state;
 
+        logic PCUpdate, Branch_signal;
+
         logic [6:0] opcode;
         logic [2:0] funct3;
         logic [6:0] funct7;
@@ -38,6 +40,7 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
 //        enum {FETCH, DECODE, MEMORY_ADDRESS, MEMORY_READ, WRITEBACK, MEMORY_WRITE, EXECUTER, ALU_WB, EXECUTEI,JAL, BRANCH, START} ps, ns;
         enum {FETCH, DECODE, MEMORY_ADDRESS, MEMORY_READ, WRITEBACK, MEMORY_WRITE, EXECUTER, ALU_WB, EXECUTEI,JAL, BRANCH, JALR, AUIPC} ps, ns;
         assign state = ps;
+        assign pc_write = PCUpdate | (Branch_signal);
 
         ALUDecoder alu_decoder (.opb5(opcode[5]), .ALUop, .funct3, .funct7b5(funct7[5]), .ALUControl);
 
@@ -45,7 +48,7 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
         always_comb begin
             ns = FETCH;
 //            ns = START;
-            pc_write = 1'bx;
+            PCUpdate = 1'bx;
             AdrSrc = 1'bx;
             RegWrite = 1'bx;
             MemWrite = 1'bx;
@@ -57,7 +60,7 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
             case(ps)
                 FETCH: begin
                     ns = DECODE;
-                    pc_write = 1'b1;
+                    PCUpdate = 1'b1;
                     AdrSrc = 1'b0;
                     IRWrite = 1'b1;
                     ALUSrca = 2'b00;
@@ -149,7 +152,7 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
                     ALUSrcb = 2'b10;
                     ALUop = 2'b00;
                     ResultSrc = 2'b00;
-                    pc_write = 1'b1;
+                    PCUpdate = 1'b1;
                 end
                 JALR: begin
                     ns = ALU_WB;
@@ -157,7 +160,7 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
                     ALUSrcb = 2'b10;
                     ALUop = 2'b00;
                     ResultSrc = 2'b00;
-                    pc_write = 1'b1;
+                    PCUpdate = 1'b1;
                 end
                 ALU_WB: begin
                     ns = FETCH;
@@ -170,31 +173,22 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
                     ALUSrcb = 2'b00;
                     ALUop = 2'b01;
                     ResultSrc = 2'b00;
-                    pc_write = 1'b0;
+                    Branch_signal = 1'b0;
                     case (funct3)
                         3'b000: begin // beq
-                            ALUop = 2'b01;
-                            if(zero) pc_write = 1'b1;
-                            else pc_write = 1'b0;
+                            if (zero) Branch_signal = 1'b1;
                         end
                         3'b001: begin // bne
-                            ALUop = 2'b01;
-                            if(!zero) pc_write = 1'b1;
-                            else pc_write = 1'b0;
+                            if (!zero) Branch_signal = 1'b1;
                         end
                         3'b100: begin // blt
-                            ALUop = 2'b11;
-                            if(negative) pc_write = 1'b1;
-                            else pc_write = 1'b0;
+                            if (negative) Branch_signal = 1'b1;
                         end
                         3'b101: begin // bge
-                            ALUop = 2'b11;
-                            if(!negative) pc_write = 1'b1;
-                            else pc_write = 1'b0;
+                            if (!negative) Branch_signal = 1'b1;
                         end
                         default: begin
-                            ALUop = 2'b01;
-                            pc_write = 1'b0;
+                            Branch_signal = 1'b0;
                         end
                     endcase
                 end

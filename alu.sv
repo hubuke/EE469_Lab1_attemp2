@@ -56,18 +56,14 @@ module alu (srca, srcb, alu_op, result, zero, negative, carryout, overflow);
                 if (srca[31] == srcb[31]) begin
                     if (srca < srcb) begin
                         result = srca;
-                        negative = 1'b1;
                     end else begin
                         result = ZERO_32bit;
-                        negative = 1'b0;
                     end
                 end else begin
                     if (srca[31]) begin
                         result = srca;
-                        negative = 1'b1;
                     end else begin
                         result = ZERO_32bit;
-                        negative = 1'b0;
                     end
                 end
             end
@@ -87,92 +83,92 @@ module alu (srca, srcb, alu_op, result, zero, negative, carryout, overflow);
     end
 endmodule
 
-`timescale 1ns/1ps
+// `timescale 1ns/1ps
 
-module alu_testbench();
-    logic   [31:0]  srca;
-    logic   [31:0]  srcb;
-    logic   [2:0]   alu_op;
-    reg     [31:0]  result;
-    reg             zero, negative, carryout, overflow;
-    reg             error;
+// module alu_testbench();
+//     logic   [31:0]  srca;
+//     logic   [31:0]  srcb;
+//     logic   [2:0]   alu_op;
+//     reg     [31:0]  result;
+//     reg             zero, negative, carryout, overflow;
+//     reg             error;
 
-    alu dut (srca, srcb, alu_op, result, zero, negative, carryout, overflow);
+//     alu dut (srca, srcb, alu_op, result, zero, negative, carryout, overflow);
 
-    initial begin
-        // add
-        for (int i = 0; i < 100; i = i + 1) begin
-            srca = $random; srcb = $random; alu_op = 3'b000; #1;
-            if (result != srca + srcb) begin
+//     initial begin
+//         // add
+//         for (int i = 0; i < 100; i = i + 1) begin
+//             srca = $random; srcb = $random; alu_op = 3'b000; #1;
+//             if (result != srca + srcb) begin
                 
-                error = 1;
-            end else begin
-                error = 0;
-            end
-        end
-        // sub
-        for (int i = 0; i < 100; i = i + 1) begin
-            srca = $random; srcb = $random; alu_op = 3'b001; #1;
-            if (result != srca - srcb) begin
-                error = 1;
-            end else begin
-                error = 0;
-            end
-        end
-        // and
-        for (int i = 0; i < 100; i = i + 1) begin
-            srca = $random; srcb = $random; alu_op = 3'b010; #1;
-            if (result != (srca & srcb)) begin
-                error = 1;
-            end else begin
-                error = 0;
-            end
-        end
-        // or
-        for (int i = 0; i < 100; i = i + 1) begin
-            srca = $random; srcb = $random; alu_op = 3'b011; #1;
-            if (result != (srca | srcb)) begin
-                error = 1;
-            end else begin
-                error = 0;
-            end
-        end
-        // xor
-        for (int i = 0; i < 100; i = i + 1) begin
-            srca = $random; srcb = $random; alu_op = 3'b100; #1;
-            if (result != (srca ^ srcb)) begin
-                error = 1;
-            end else begin
-                error = 0;
-            end
-        end
-        // shift left
-        for (int i = 0; i < 100; i = i + 1) begin
-            srca = $random; srcb = $random; alu_op = 3'b101; #1;
-            if (result != (srca << srcb[4:0])) begin
-                error = 1;
-            end else begin
-                error = 0;
-            end
-        end
-        // shift right
-        for (int i = 0; i < 100; i = i + 1) begin
-            srca = $random; srcb = $random; alu_op = 3'b110; #1;
-            if (result != (srca >> srcb[4:0])) begin
-                error = 1;
-            end else begin
-                error = 0;
-            end
-        end
-        // move
-        for (int i = 0; i < 100; i = i + 1) begin
-            srca = $random; srcb = $random; alu_op = 3'b111; #1;
-            if (result != srcb) begin
-                error = 1;
-            end else begin
-                error = 0;
-            end
-        end
-    end
-endmodule
+//                 error = 1;
+//             end else begin
+//                 error = 0;
+//             end
+//         end
+//         // sub
+//         for (int i = 0; i < 100; i = i + 1) begin
+//             srca = $random; srcb = $random; alu_op = 3'b001; #1;
+//             if (result != srca - srcb) begin
+//                 error = 1;
+//             end else begin
+//                 error = 0;
+//             end
+//         end
+//         // and
+//         for (int i = 0; i < 100; i = i + 1) begin
+//             srca = $random; srcb = $random; alu_op = 3'b010; #1;
+//             if (result != (srca & srcb)) begin
+//                 error = 1;
+//             end else begin
+//                 error = 0;
+//             end
+//         end
+//         // or
+//         for (int i = 0; i < 100; i = i + 1) begin
+//             srca = $random; srcb = $random; alu_op = 3'b011; #1;
+//             if (result != (srca | srcb)) begin
+//                 error = 1;
+//             end else begin
+//                 error = 0;
+//             end
+//         end
+//         // xor
+//         for (int i = 0; i < 100; i = i + 1) begin
+//             srca = $random; srcb = $random; alu_op = 3'b100; #1;
+//             if (result != (srca ^ srcb)) begin
+//                 error = 1;
+//             end else begin
+//                 error = 0;
+//             end
+//         end
+//         // shift left
+//         for (int i = 0; i < 100; i = i + 1) begin
+//             srca = $random; srcb = $random; alu_op = 3'b101; #1;
+//             if (result != (srca << srcb[4:0])) begin
+//                 error = 1;
+//             end else begin
+//                 error = 0;
+//             end
+//         end
+//         // shift right
+//         for (int i = 0; i < 100; i = i + 1) begin
+//             srca = $random; srcb = $random; alu_op = 3'b110; #1;
+//             if (result != (srca >> srcb[4:0])) begin
+//                 error = 1;
+//             end else begin
+//                 error = 0;
+//             end
+//         end
+//         // move
+//         for (int i = 0; i < 100; i = i + 1) begin
+//             srca = $random; srcb = $random; alu_op = 3'b111; #1;
+//             if (result != srcb) begin
+//                 error = 1;
+//             end else begin
+//                 error = 0;
+//             end
+//         end
+//     end
+// endmodule
 

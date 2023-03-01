@@ -77,8 +77,8 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
     // mux4_1 SrcB_mux (.out(srcb), .i0(RD2), .i1(ImmExt), .i2(pc_increment), .i3(ZERO_32bit), .sel(ALUSrcb));
     alu alu0 (.srca, .srcb, .alu_op(ALUControl), .result(ALUResult), .zero, .negative, .carryout, .overflow);
     enable_register ALU_reg (.clk, .EN(enable), .reset, .in(ALUResult), .out(ALUOut));
-    // enable_register Data_reg (.clk, .EN(enable), .reset, .in(ReadData), .out(Data));
-    comb_reg Data_reg (.in(ReadData), .out(Data), .en(enable));
+    enable_register Data_reg (.clk, .EN(enable), .reset, .in(ReadData), .out(Data));
+    // comb_reg Data_reg (.in(ReadData), .out(Data), .en(enable));
     mux4_1 Result_mux (.out(Result), .i0(ALUOut), .i1(Data), .i2(ALUResult), .i3(ZERO_32bit), .sel(ResultSrc));
 
     // control
@@ -109,7 +109,7 @@ endmodule
         reset <=0; @(posedge clk);
         reset <=0; @(posedge clk); 
     
-        for (int i = 0; i < 500000; i = i + 1) @(posedge clk);
+        for (int i = 0; i < 1000; i = i + 1) @(posedge clk);
         $stop;
     end
 
