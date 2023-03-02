@@ -109,7 +109,7 @@ endmodule
         reset <=0; @(posedge clk);
         reset <=0; @(posedge clk); 
     
-        for (int i = 0; i < 1000; i = i + 1) @(posedge clk);
+        for (int i = 0; i < 10000; i = i + 1) @(posedge clk);
         $stop;
     end
 

@@ -13,7 +13,7 @@ module register_file (clk, A1, A2, A3, WD3, WE3, RD1, RD2);
     assign registers[0] = zero;
 
     always_ff @(posedge clk) begin
-        if (WE3) begin
+        if (WE3 && A3 !=0 ) begin
             registers[A3] <= WD3;
         end
         

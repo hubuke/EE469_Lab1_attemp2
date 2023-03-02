@@ -57,6 +57,7 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
             ALUSrca = 2'bxx;
             ALUSrcb = 2'bxx;
             ALUop = 2'bxx;
+            Branch_signal = 1'bx;
             case(ps)
                 FETCH: begin
                     ns = DECODE;
