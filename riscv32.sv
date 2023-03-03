@@ -5,10 +5,11 @@
 
 /* verilator lint_off TIMESCALEMOD */
 
-module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
+module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset, result_out);
 
-    input                clk; 
-    input                reset; 
+    input  logic              clk; 
+    input  logic              reset;
+    output logic              result_out;
 
     // datapath signals
     logic [31:0]  pc_out; // program counter output
@@ -64,7 +65,7 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset);
     enable_register PC_reg (.clk, .EN(IRWrite), .reset, .in(pc_out), .out(OldPC));
     // enable_register RD_reg (.clk, .EN(IRWrite), .reset, .in(ReadData), .out(Instr));
     comb_reg Instr_reg (.in(ReadData), .out(Instr), .en(IRWrite));
-    register_file reg_file (.clk, .A1(Rs1), .A2(Rs2), .A3(Rd), .WD3(Result), .WE3(RegWrite), .RD1, .RD2);
+    register_file reg_file (.clk, .A1(Rs1), .A2(Rs2), .A3(Rd), .WD3(Result), .WE3(RegWrite), .RD1, .RD2, .result_out);
     get_imm get_imm0 (.instruction(Instr), .imm(ImmExt));
     
 //    enable_register RD1_reg (.clk, .EN(enable), .reset, .in(RD1), .out(RD1_A));

@@ -11,8 +11,6 @@ module pc #(reset_pc = 32'h00000000) (clk, reset, pc_write, pc_in, pc_out);
         end else begin
             if (pc_write) begin
                 pc_out <= pc_in;
-            end else begin
-                pc_out <= pc_out;
             end
         end
     end

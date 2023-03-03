@@ -8,10 +8,10 @@ module comb_reg (in, out, en);
     reg [31:0] data;
 
 
-    always_comb begin
+    always @(*) begin
         if (en) begin
             data = in;
-        end
+        end else data = data;
         out <= data;
     end
 endmodule

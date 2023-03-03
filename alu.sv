@@ -12,6 +12,12 @@ module alu (srca, srcb, alu_op, result, zero, negative, carryout, overflow);
     localparam          ZERO_32bit = 32'h00000000;
 
     always_comb begin
+        carryout = 1'bx;
+        zero = 1'bx;
+        negative = 1'bx;
+        overflow = 1'bx;
+        temp_result = 33'bx;
+        
         case (alu_op)
             4'b0000: begin
                 temp_result = srca + srcb; // add
