@@ -3,14 +3,15 @@
 //divided_clocks[0] = 50MHz, [1] = 25Mhz, ... [23] = 6Hz,
 //[24] = 3Hz, [25] = 1.5Hz, ...and so on.
 
-module clock_divider (clock, divided_clocks); 
+module clock_divider (clock, reset, divided_clocks); 
     input logic clock;
-//    input logic reset;
+    input logic reset;
     output logic [31:0] divided_clocks;
       
-    initial divided_clocks = 32'h00000000;
+//    initial divided_clocks = 32'h00000000;
       
     always_ff @(posedge clock) begin
-        divided_clocks <= divided_clocks + 32'h00000001;
+        if (reset) divided_clocks <= 32'h0;
+        else divided_clocks <= divided_clocks + 32'h00000001;
     end
 endmodule
