@@ -60,7 +60,6 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset, result_out);
     // all below are datapath signals
     pc #(.reset_pc(reset_pc)) pc0 (.clk, .reset, .pc_write, .pc_in(Result), .pc_out);
     mux2_1 mem_addr_mux (.out(mem_addr), .i0(pc_out), .i1(Result), .sel(AdrSrc));
-    // memory unified_memory (.clk, .A(mem_addr), .WD(WriteData), .MemWrite, .RD(ReadData)); // unified memory
     memory_single_reg unified_memory (.clk, .A(mem_addr), .WD(WriteData), .MemWrite, .RD(ReadData)); // unified memory
     enable_register PC_reg (.clk, .EN(IRWrite), .reset, .in(pc_out), .out(OldPC));
     // enable_register RD_reg (.clk, .EN(IRWrite), .reset, .in(ReadData), .out(Instr));
@@ -78,8 +77,8 @@ module riscv32 #(parameter reset_pc = 32'h00000000) (clk, reset, result_out);
     // mux4_1 SrcB_mux (.out(srcb), .i0(RD2), .i1(ImmExt), .i2(pc_increment), .i3(ZERO_32bit), .sel(ALUSrcb));
     alu alu0 (.srca, .srcb, .alu_op(ALUControl), .result(ALUResult), .zero, .negative, .carryout, .overflow);
     enable_register ALU_reg (.clk, .EN(enable), .reset, .in(ALUResult), .out(ALUOut));
-    enable_register Data_reg (.clk, .EN(enable), .reset, .in(ReadData), .out(Data));
-    // comb_reg Data_reg (.in(ReadData), .out(Data), .en(enable));
+    // enable_register Data_reg (.clk, .EN(enable), .reset, .in(ReadData), .out(Data));
+    comb_reg Data_reg (.in(ReadData), .out(Data), .en(enable));
     mux4_1 Result_mux (.out(Result), .i0(ALUOut), .i1(Data), .i2(ALUResult), .i3(ZERO_32bit), .sel(ResultSrc));
 
     // control

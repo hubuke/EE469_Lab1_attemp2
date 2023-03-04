@@ -8,8 +8,9 @@ module clock_divider (clock, divided_clocks);
 //    input logic reset;
     output logic [31:0] divided_clocks;
       
+    initial divided_clocks = 32'h00000000;
       
     always_ff @(posedge clock) begin
-        divided_clocks <= divided_clocks + 1;
+        divided_clocks <= divided_clocks + 32'h00000001;
     end
 endmodule

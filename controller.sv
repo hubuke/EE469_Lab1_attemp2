@@ -38,7 +38,7 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
         assign  funct7[6:0] = instruction[31:25];
         
 //        enum {FETCH, DECODE, MEMORY_ADDRESS, MEMORY_READ, WRITEBACK, MEMORY_WRITE, EXECUTER, ALU_WB, EXECUTEI,JAL, BRANCH, START} ps, ns;
-        enum {FETCH, DECODE, MEMORY_ADDRESS, MEMORY_READ, WRITEBACK, MEMORY_WRITE, EXECUTER, ALU_WB, EXECUTEI,JAL, BRANCH, JALR, AUIPC} ps, ns;
+        enum {FETCH, DECODE, MEMORY_ADDRESS, MEMORY_READ, WRITEBACK, MEMORY_WRITE, EXECUTER, ALU_WB, EXECUTEI,JAL, BRANCH, JALR} ps, ns;
         assign state = ps;
         assign pc_write = PCUpdate | (Branch_signal);
 
@@ -63,13 +63,13 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
                     ns = DECODE;
                     PCUpdate = 1'b1;
                     AdrSrc = 1'b0;
-                    IRWrite = 1'b1;
                     ALUSrca = 2'b00;
                     ALUSrcb = 2'b10;
                     ALUop = 2'b00;
                     ResultSrc = 2'b10;
                 end
                 DECODE: begin
+                    IRWrite = 1'b1;
                     ALUSrca = 2'b01;
                     ALUSrcb = 2'b01;
                     ALUop = 2'b00;
@@ -88,15 +88,17 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
                         end
                         `JALR: begin // might need to change
                             ns = JALR;
-                            ALUSrca = 2'b10;
-                            ALUSrcb = 2'b01;
+                            ALUSrca = 2'b01;
+                            ALUSrcb = 2'b10;
                             ALUop = 2'b00;
+                            ResultSrc = 2'b10;
+                            RegWrite = 1'b1;
                         end
                         `BRANCH: begin
                             ns = BRANCH;
                         end
                         `AUIPC: begin
-                            ns = AUIPC;
+                            ns = ALU_WB;
                         end
                         default: begin
                             ns = FETCH;
@@ -156,11 +158,11 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
                     PCUpdate = 1'b1;
                 end
                 JALR: begin
-                    ns = ALU_WB;
-                    ALUSrca = 2'b01;
-                    ALUSrcb = 2'b10;
+                    ns = FETCH;
+                    ALUSrca = 2'b10;
+                    ALUSrcb = 2'b01;
                     ALUop = 2'b00;
-                    ResultSrc = 2'b00;
+                    ResultSrc = 2'b10;
                     PCUpdate = 1'b1;
                 end
                 ALU_WB: begin
@@ -193,12 +195,12 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
                         end
                     endcase
                 end
-                AUIPC: begin
-                    ns = ALU_WB;
-                    ALUSrca = 2'b01;
-                    ALUSrcb = 2'b01;
-                    ALUop = 2'b00;
-                end
+                // AUIPC: begin
+                //     ns = ALU_WB;
+                //     ALUSrca = 2'b01;
+                //     ALUSrcb = 2'b01;
+                //     ALUop = 2'b00;
+                // end
             endcase
         end
 
