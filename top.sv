@@ -1,19 +1,20 @@
 `timescale 1ns / 1ps
 
-module top(CLK100MHZ, BTNC, LED);
+module top(CLK100MHZ, BTNC, SW, LED);
     input   logic               CLK100MHZ;
     input   logic               BTNC;
+    input   logic [15:0]        SW;
     output  logic [15:0]        LED;
 
     logic         [31:0]        divided_clocks;
 
     logic                       result_out;
-    
+
     assign reset = BTNC;
 
-    clock_divider clk_divider (.clock(CLK100MHZ), .reset(BTNC), .divided_clocks(divided_clocks));
+    clock_divider clk_divider (.clock(CLK100MHZ), .reset(SW[15]), .divided_clocks(divided_clocks));
 
-    riscv32 cpu (.clk(divided_clocks[1]), .reset(BTNC), .result_out(result_out));
+    riscv32 cpu (.clk(divided_clocks[3]), .reset(BTNC), .result_out(result_out));
 
 //    riscv32 cpu (.clk(CLK100MHZ), .reset(BTNC), .result_out(result_out));
     assign LED[0] = result_out;
@@ -29,6 +30,7 @@ module top_testbench();
     logic               CLK100MHZ;
     logic               BTNC;
     logic [15:0]        LED;
+    logic [15:0]        SW;
     
     parameter CLOCKPERIOD  = 10;
     initial begin
@@ -36,12 +38,13 @@ module top_testbench();
         forever #(CLOCKPERIOD/2) CLK100MHZ <= ~CLK100MHZ;
     end
     
-    top dut (.CLK100MHZ, .BTNC, .LED);
+    top dut (.CLK100MHZ, .SW, .BTNC, .LED);
     
     initial begin
-        BTNC <= 1; @(posedge CLK100MHZ);
-        BTNC <= 1; @(posedge CLK100MHZ);
-        BTNC <= 1; @(posedge CLK100MHZ);
+        SW[15] <= 1; @(posedge CLK100MHZ);
+        SW[15] <= 1; @(posedge CLK100MHZ);
+        SW[15] <= 0; repeat(10) @(posedge CLK100MHZ);
+        BTNC <= 1; repeat(100) @(posedge CLK100MHZ);
         BTNC <= 0; @(posedge CLK100MHZ);
         for (int i = 0; i < 50000; i = i + 1) @(posedge CLK100MHZ);
         $stop;

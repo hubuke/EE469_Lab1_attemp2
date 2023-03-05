@@ -8,8 +8,6 @@ module clock_divider (clock, reset, divided_clocks);
     input logic reset;
     output logic [31:0] divided_clocks;
       
-//    initial divided_clocks = 32'h00000000;
-      
     always_ff @(posedge clock) begin
         if (reset) divided_clocks <= 32'h0;
         else divided_clocks <= divided_clocks + 32'h00000001;
