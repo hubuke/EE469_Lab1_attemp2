@@ -1,17 +1,23 @@
 `timescale 1ns/1ps
 
-module comb_reg (in, out, en);
+module comb_reg (clk, in, out, en);
     input logic [31:0] in;
-    input logic en;
+    input logic en, clk;
     output logic [31:0] out;
 
-    reg [31:0] data;
+    logic [31:0] data_r, data_n;
 
+    assign out = data_r;
 
-    always @(*) begin
+    always_comb begin
         if (en) begin
-            data = in;
-        end else data = data;
-        out <= data;
+            data_r = in;
+        end else begin
+            data_r = data_n;
+        end
+    end
+
+    always_ff @(posedge clk) begin
+        data_n <= data_r;
     end
 endmodule
