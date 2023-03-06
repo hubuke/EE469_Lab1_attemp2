@@ -1,17 +1,19 @@
 `timescale 1ns / 1ps
 
-module register_file (clk, A1, A2, A3, WD3, WE3, RD1, RD2, result_out);
+module register_file (clk, A1, A2, A3, WD3, WE3, RD1, RD2, result_out, reg_10);
     input logic clk;
     input logic [4:0] A1, A2, A3;
     input logic [31:0] WD3;
     input logic WE3;
     output logic [31:0] RD1, RD2;
     output logic result_out;
+    output logic [31:0] reg_10;
 
     reg [31:0] registers [0:31];
 
     localparam zero = 32'h00000000;
     assign registers[0] = zero;
+    assign reg_10 = registers[10];
 
     always_ff @(posedge clk) begin
         if (WE3 && A3 !=0 ) begin
