@@ -9,20 +9,18 @@ module top(CLK100MHZ, SW, LED);
     logic                       result_out;
     logic         [31:0]        pc_out;
 
+    parameter i = 1;
+
     clock_divider clk_divider (.clock(CLK100MHZ), .reset(SW[15]), .divided_clocks(divided_clocks));
 
-    riscv32 cpu (.clk(divided_clocks[1]), .reset(SW[0]), .result_out(result_out), .reg_10, .pc_out);
+    riscv32 cpu (.clk(divided_clocks[i]), .reset(SW[0]), .result_out(result_out), .reg_10, .pc_out, .LED2(LED[2]), .LED4(LED[4]));
 
     assign LED[0] = result_out;
-    assign LED[1] = divided_clocks[1];
+    assign LED[1] = divided_clocks[i];
 
     assign LED[15:12] = reg_10[3:0]; // 4 LSBs of reg_10
     assign LED[11:8] = pc_out[7:4]; // 4 MSBs of reg_10
-    assign LED[7:4] = pc_out[3:0]; // 4 LSBs of pc_out
-    // assign LED[8]  = divided_clocks[2];
-
-    // assign LED[7] = SW[7];
-
+    assign LED[7:6] = pc_out[3:2]; // 4 LSBs of pc_out
 endmodule
 
 `timescale 1ns / 1ps

@@ -15,7 +15,7 @@ module enable_register (clk, reset, EN, in, out);
     //     end
     //     out <= single_reg;
     // end
-    always_ff @(posedge clk) begin
+    always_ff @(posedge clk or posedge reset) begin
         if (reset) begin
             out <= 0;
         end else if (EN) begin

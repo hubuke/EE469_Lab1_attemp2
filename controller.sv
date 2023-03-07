@@ -48,16 +48,16 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
         always_comb begin
             ns = FETCH;
 //            ns = START;
-            PCUpdate = 1'bx;
+            PCUpdate = 1'b0;
             AdrSrc = 1'bx;
-            RegWrite = 1'bx;
-            MemWrite = 1'bx;
-            IRWrite = 1'bx;
+            RegWrite = 1'b0;
+            MemWrite = 1'b0;
+            IRWrite = 1'b0;
             ResultSrc = 2'bxx;
             ALUSrca = 2'bxx;
             ALUSrcb = 2'bxx;
             ALUop = 2'bxx;
-            Branch_signal = 1'bx;
+            Branch_signal = 1'b0;
             case(ps)
                 FETCH: begin
                     ns = DECODE;
@@ -204,7 +204,7 @@ module controller(clk, reset, instruction, pc_write, AdrSrc, MemWrite, IRWrite,
             endcase
         end
 
-        always_ff @(posedge clk) begin
+        always_ff @(posedge clk or posedge reset) begin
 //            if(reset) ps <= START;
             if(reset) ps <= FETCH;
             else ps <= ns;
